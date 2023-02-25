@@ -6,6 +6,8 @@ import Formulario from "../components/Formulario";
 import Botao from "../components/Botao";
 
 export default function Home() {
+    const [cliente, setCliente] = useState<Cliente>(Cliente.vazio());
+    const [visivel, setVisivel] = useState<"tabela" | "form">("tabela");
     const clientes = [
         new Cliente("Ana", 22, "1"),
         new Cliente("Jhonny", 25, "2"),
@@ -15,12 +17,19 @@ export default function Home() {
         new Cliente("Kakashi", 36, "6"),
     ];
     function clienteSelecionado(cliente: Cliente) {
-        console.log(cliente.nome);
+        setCliente(cliente);
+        setVisivel("form");
     }
     function clienteExcluido(cliente: Cliente) {
         console.log(cliente.nome);
     }
-    const [visivel, setVisivel] = useState<"tabela" | "form">("tabela");
+    function novoCliente() {
+        setCliente(Cliente.vazio());
+        setVisivel("form");
+    }
+    function salvarCliente(cliente: Cliente) {
+        setVisivel("tabela");
+    }
     return (
         <div
             className={`
@@ -32,7 +41,11 @@ export default function Home() {
                 {visivel === "tabela" ? (
                     <>
                         <div className="flex justify-end">
-                            <Botao className="mb-4" cor="green" onClick={()=>setVisivel('form')}>
+                            <Botao
+                                className="mb-4"
+                                cor="green"
+                                onClick={novoCliente}
+                            >
                                 Novo Cliente
                             </Botao>
                         </div>
@@ -43,9 +56,10 @@ export default function Home() {
                         />
                     </>
                 ) : (
-                    <Formulario 
-                        cliente={clientes[0]}
-                        cancelado={()=>setVisivel('tabela')}
+                    <Formulario
+                        cliente={cliente}
+                        clienteMudou={salvarCliente}
+                        cancelado={() => setVisivel("tabela")}
                     />
                 )}
             </Layout>
